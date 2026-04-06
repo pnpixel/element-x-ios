@@ -131,6 +131,26 @@ class EventTimelineItemProxy {
     lazy var shouldBoost = item.lazyProvider.containsOnlyEmojis()
     
     lazy var readReceipts = item.readReceipts
+
+    /// Parses `com.myorg.suggested_reactions` from the event's original JSON content.
+    /// Returns an empty array when the field is absent or the event has no accessible content.
+    lazy var suggestedReactions: [SuggestedReaction] = {
+        guard let jsonString = item.lazyProvider.debugInfo().originalJson,
+              let data = jsonString.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let content = json["content"] as? [String: Any],
+              let suggestedArray = content[SuggestedReaction.contentKey] as? [Any] else {
+            return []
+        }
+        return suggestedArray.compactMap { element -> SuggestedReaction? in
+            if let emoji = element as? String {
+                return SuggestedReaction(emoji: emoji, label: nil)
+            } else if let dict = element as? [String: Any], let emoji = dict["emoji"] as? String {
+                return SuggestedReaction(emoji: emoji, label: dict["label"] as? String)
+            }
+            return nil
+        }
+    }()
 }
 
 struct TimelineItemDebugInfo: Identifiable, CustomStringConvertible {

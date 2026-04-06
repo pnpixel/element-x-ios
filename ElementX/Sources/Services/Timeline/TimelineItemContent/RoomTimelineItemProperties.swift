@@ -20,6 +20,9 @@ struct RoomTimelineItemProperties: Hashable {
     var isEdited = false
     /// The aggregated reactions that have been sent for this item.
     var reactions: [AggregatedReaction] = []
+    /// Reactions suggested by the sender via `com.myorg.suggested_reactions`.
+    /// Shown above regular reactions until the current user has reacted with any of them.
+    var suggestedReactions: [SuggestedReaction] = []
     /// The delivery status for this item. If a sent message is echoed the value is nil.
     var deliveryStatus: TimelineItemDeliveryStatus?
     /// The read receipts of the item, ordered from newest to oldest.

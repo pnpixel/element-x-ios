@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.1
 
 import PackageDescription
 
@@ -23,9 +23,6 @@ let package = Package(
                 .product(name: "SwiftUIIntrospect", package: "SwiftUI-Introspect"),
                 .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
             ],
-            swiftSettings: [
-                .defaultIsolation(MainActor.self)
-            ]
         ),
         .testTarget(
             name: "CompoundTests",
@@ -35,9 +32,6 @@ let package = Package(
             ],
             exclude: [
                 "__Snapshots__"
-            ],
-            swiftSettings: [
-                .defaultIsolation(MainActor.self)
             ]
         )
     ]

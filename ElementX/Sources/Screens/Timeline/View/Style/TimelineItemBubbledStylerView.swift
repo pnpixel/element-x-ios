@@ -115,16 +115,26 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
                 .timelineItemAccessibility(timelineItem) {
                     context.send(viewAction: .displayTimelineItemMenu(itemID: timelineItem.id))
                 }
-            
+
             // Do not display reactions in the pinned events timeline
-            if context.viewState.timelineKind != .pinned,
-               !timelineItem.properties.reactions.isEmpty {
-                TimelineReactionsView(context: context,
-                                      itemID: timelineItem.id,
-                                      reactions: timelineItem.properties.reactions,
-                                      isLayoutRTL: timelineItem.isOutgoing)
-                    // Workaround to stop the message long press stealing the touch from the reaction buttons
-                    .onTapGesture { }
+            if context.viewState.timelineKind != .pinned {
+                let suggestedReactions = timelineItem.properties.suggestedReactions
+                if !suggestedReactions.isEmpty, shouldShowSuggestedReactions(suggestedReactions) {
+                    SuggestedReactionsView(context: context,
+                                          itemID: timelineItem.id,
+                                          suggestions: suggestedReactions)
+                        // Workaround to stop the message long press stealing the touch from the buttons
+                        .onTapGesture { }
+                }
+
+                if !timelineItem.properties.reactions.isEmpty {
+                    TimelineReactionsView(context: context,
+                                          itemID: timelineItem.id,
+                                          reactions: timelineItem.properties.reactions,
+                                          isLayoutRTL: timelineItem.isOutgoing)
+                        // Workaround to stop the message long press stealing the touch from the reaction buttons
+                        .onTapGesture { }
+                }
             }
             
             if context.viewState.areThreadsEnabled,
@@ -217,6 +227,15 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
         }
     }
     
+    /// Returns true when the suggested reactions row should be visible.
+    /// Hidden once the current user has sent any of the suggested emojis.
+    private func shouldShowSuggestedReactions(_ suggestions: [SuggestedReaction]) -> Bool {
+        let suggestedEmojis = Set(suggestions.map(\.emoji))
+        return !timelineItem.properties.reactions.contains { reaction in
+            reaction.isHighlighted && suggestedEmojis.contains(reaction.key)
+        }
+    }
+
     private var messageBubbleTopPadding: CGFloat {
         guard timelineItem.isOutgoing || isDirectOneToOneRoom else { return 0 }
         return timelineGroupStyle == .single || timelineGroupStyle == .first ? 8 : 0

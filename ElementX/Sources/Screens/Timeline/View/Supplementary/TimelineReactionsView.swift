@@ -210,6 +210,49 @@ struct TimelineReactionAddMoreButtonLabel: View {
     }
 }
 
+// MARK: - Suggested Reactions
+
+/// A row of chip buttons for bot-suggested reactions, shown above regular reactions
+/// until the current user has reacted with any of the suggested emojis.
+@MainActor
+struct SuggestedReactionsView: View {
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+
+    let context: TimelineViewModel.Context
+    let itemID: TimelineItemIdentifier
+    let suggestions: [SuggestedReaction]
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(suggestions, id: \.emoji) { suggestion in
+                Button {
+                    feedbackGenerator.impactOccurred()
+                    context.send(viewAction: .toggleReaction(key: suggestion.emoji, itemID: itemID))
+                } label: {
+                    SuggestedReactionButtonLabel(text: suggestion.displayText)
+                }
+            }
+        }
+        .padding(.leading, 4)
+    }
+}
+
+struct SuggestedReactionButtonLabel: View {
+    let text: String
+    @ScaledMetric(relativeTo: .subheadline) private var lineHeight = 20
+
+    var body: some View {
+        TimelineReactionButtonLabel {
+            Text(text)
+                .font(.compound.bodySM)
+                .frame(height: lineHeight, alignment: .center)
+                .padding(.vertical, 6)
+                .padding(.horizontal, 12)
+                .foregroundColor(.compound.textSecondary)
+        }
+    }
+}
+
 struct TimelineReactionViewPreviewsContainer: View {
     var body: some View {
         VStack(spacing: 8) {

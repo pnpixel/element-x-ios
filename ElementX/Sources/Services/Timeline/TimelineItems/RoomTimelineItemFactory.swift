@@ -126,12 +126,13 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                isEdited: messageContent.isEdited,
                                                reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                               suggestedReactions: eventItemProxy.suggestedReactions,
                                                deliveryStatus: eventItemProxy.deliveryStatus,
                                                orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
                                                encryptionForwarder: eventItemProxy.forwarder))
     }
-    
+
     private func buildImageTimelineItem(for eventItemProxy: EventTimelineItemProxy,
                                         _ messageLikeContent: MsgLikeContent,
                                         _ messageContent: MessageContent,
@@ -150,12 +151,13 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                 threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                 isEdited: messageContent.isEdited,
                                                 reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                suggestedReactions: eventItemProxy.suggestedReactions,
                                                 deliveryStatus: eventItemProxy.deliveryStatus,
                                                 orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                 encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
                                                 encryptionForwarder: eventItemProxy.forwarder))
     }
-    
+
     private func buildVideoTimelineItem(for eventItemProxy: EventTimelineItemProxy,
                                         _ messageLikeContent: MsgLikeContent,
                                         _ messageContent: MessageContent,
@@ -174,12 +176,13 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                 threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                 isEdited: messageContent.isEdited,
                                                 reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                suggestedReactions: eventItemProxy.suggestedReactions,
                                                 deliveryStatus: eventItemProxy.deliveryStatus,
                                                 orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                 encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
                                                 encryptionForwarder: eventItemProxy.forwarder))
     }
-    
+
     private func buildAudioTimelineItem(for eventItemProxy: EventTimelineItemProxy,
                                         _ messageLikeContent: MsgLikeContent,
                                         _ messageContent: MessageContent,
@@ -198,12 +201,13 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                 threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                 isEdited: messageContent.isEdited,
                                                 reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                suggestedReactions: eventItemProxy.suggestedReactions,
                                                 deliveryStatus: eventItemProxy.deliveryStatus,
                                                 orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                 encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
                                                 encryptionForwarder: eventItemProxy.forwarder))
     }
-    
+
     private func buildVoiceTimelineItem(for eventItemProxy: EventTimelineItemProxy,
                                         _ messageLikeContent: MsgLikeContent,
                                         _ messageContent: MessageContent,
@@ -221,6 +225,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                        threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                        isEdited: messageContent.isEdited,
                                                        reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                       suggestedReactions: eventItemProxy.suggestedReactions,
                                                        deliveryStatus: eventItemProxy.deliveryStatus,
                                                        orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                        encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -245,6 +250,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                isEdited: messageContent.isEdited,
                                                reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                               suggestedReactions: eventItemProxy.suggestedReactions,
                                                deliveryStatus: eventItemProxy.deliveryStatus,
                                                orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -268,12 +274,13 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                  threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                  isEdited: messageContent.isEdited,
                                                  reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                 suggestedReactions: eventItemProxy.suggestedReactions,
                                                  deliveryStatus: eventItemProxy.deliveryStatus,
                                                  orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                  encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
                                                  encryptionForwarder: eventItemProxy.forwarder))
     }
-    
+
     private func buildEmoteTimelineItem(for eventItemProxy: EventTimelineItemProxy,
                                         _ messageLikeContent: MsgLikeContent,
                                         _ messageContent: MessageContent,
@@ -291,6 +298,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                 threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                 isEdited: messageContent.isEdited,
                                                 reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                suggestedReactions: eventItemProxy.suggestedReactions,
                                                 deliveryStatus: eventItemProxy.deliveryStatus,
                                                 orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                 encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -314,6 +322,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                    threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                    isEdited: messageContent.isEdited,
                                                    reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                   suggestedReactions: eventItemProxy.suggestedReactions,
                                                    deliveryStatus: eventItemProxy.deliveryStatus,
                                                    orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                    encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -338,6 +347,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                isEdited: messageContent.isEdited,
                                                reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                               suggestedReactions: eventItemProxy.suggestedReactions,
                                                deliveryStatus: eventItemProxy.deliveryStatus,
                                                orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -365,6 +375,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                          isThreaded: messageLikeContent.threadRoot != nil,
                                                          threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                          reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                         suggestedReactions: eventItemProxy.suggestedReactions,
                                                          deliveryStatus: eventItemProxy.deliveryStatus,
                                                          orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                          encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -426,6 +437,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                       threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                       isEdited: edited,
                                                       reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                      suggestedReactions: eventItemProxy.suggestedReactions,
                                                       deliveryStatus: eventItemProxy.deliveryStatus,
                                                       orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                       encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),
@@ -447,6 +459,7 @@ struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                                        isThreaded: messageLikeContent.threadRoot != nil,
                                                        threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
                                                        reactions: buildAggregatedReactions(messageLikeContent.reactions),
+                                                       suggestedReactions: eventItemProxy.suggestedReactions,
                                                        deliveryStatus: eventItemProxy.deliveryStatus,
                                                        orderedReadReceipts: buildOrderedReadReceipts(eventItemProxy.readReceipts),
                                                        encryptionAuthenticity: buildEncryptionAuthenticity(eventItemProxy.shieldState),

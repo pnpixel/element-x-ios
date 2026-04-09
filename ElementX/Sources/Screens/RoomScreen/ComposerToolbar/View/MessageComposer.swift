@@ -212,8 +212,7 @@ private struct MessageComposerStyleModifier<Header: View>: ViewModifier {
         if #available(iOS 26, *) {
             if isEnabled {
                 mainContent(content: content)
-                    .snapshotableGlassEffect(.regular.interactive(), // Doesn't need to be interactive but Apple does it 🤷‍♂️
-                                             snapshotBackground: .compound.bgSubtleSecondary,
+                    .snapshotableGlassEffect(snapshotBackground: .compound.bgSubtleSecondary,
                                              in: composerShape)
             } else {
                 mainContent(content: content)

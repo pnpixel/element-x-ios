@@ -88,11 +88,7 @@ struct RoomMembersListScreen: View {
     }
     
     private var sectionShape: AnyShape {
-        if #available(iOS 26, *) {
-            AnyShape(ConcentricRectangle(corners: .concentric(minimum: 26)))
-        } else {
-            AnyShape(RoundedRectangle(cornerRadius: 8))
-        }
+        AnyShape(RoundedRectangle(cornerRadius: 8))
     }
     
     @ToolbarContentBuilder

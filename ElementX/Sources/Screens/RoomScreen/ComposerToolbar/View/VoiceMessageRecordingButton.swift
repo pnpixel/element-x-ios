@@ -67,8 +67,7 @@ private struct VoiceMessageRecordingButtonStyle: ButtonStyle {
         if #available(iOS 26, *) {
             if isEnabled {
                 configuration.label
-                    .snapshotableGlassEffect(.regular.interactive(),
-                                             snapshotBackground: .compound.bgSubtleSecondary,
+                    .snapshotableGlassEffect(snapshotBackground: .compound.bgSubtleSecondary,
                                              in: .circle)
             } else {
                 configuration.label

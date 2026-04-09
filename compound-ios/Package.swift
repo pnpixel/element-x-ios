@@ -12,7 +12,7 @@ let package = Package(
         .package(url: "https://github.com/element-hq/compound-design-tokens", exact: "10.1.0"),
         // .package(path: "../compound-design-tokens"),
         .package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "26.0.1"),
-        .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols", from: "7.0.0"),
+        .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols", exact: "6.2.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.7")
     ],
     targets: [
@@ -23,6 +23,9 @@ let package = Package(
                 .product(name: "SwiftUIIntrospect", package: "SwiftUI-Introspect"),
                 .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
             ],
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         ),
         .testTarget(
             name: "CompoundTests",
@@ -32,6 +35,9 @@ let package = Package(
             ],
             exclude: [
                 "__Snapshots__"
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
             ]
         )
     ]

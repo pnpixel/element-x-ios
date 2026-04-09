@@ -121,8 +121,8 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
                 let suggestedReactions = timelineItem.properties.suggestedReactions
                 if !suggestedReactions.isEmpty, shouldShowSuggestedReactions(suggestedReactions) {
                     SuggestedReactionsView(context: context,
-                                          itemID: timelineItem.id,
-                                          suggestions: suggestedReactions)
+                                           itemID: timelineItem.id,
+                                           suggestions: suggestedReactions)
                         // Workaround to stop the message long press stealing the touch from the buttons
                         .onTapGesture { }
                 }

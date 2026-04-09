@@ -181,10 +181,6 @@ struct RoomScreen: View {
         }
         
         if context.viewState.roomThreadListEnabled {
-            if #available(iOS 26, *) {
-                ToolbarSpacer(.fixed, placement: .primaryAction)
-            }
-            
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     context.send(viewAction: .displayThreadList)

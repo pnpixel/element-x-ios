@@ -36,7 +36,7 @@ extension TextFieldStyle where Self == ElementTextFieldStyle {
 
 /// The text field style used in authentication screens.
 @MainActor
-struct ElementTextFieldStyle: @MainActor TextFieldStyle {
+struct ElementTextFieldStyle: TextFieldStyle {
     enum State {
         case success
         case error

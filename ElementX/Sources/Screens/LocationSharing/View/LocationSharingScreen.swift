@@ -112,14 +112,8 @@ struct LocationSharingScreen: View {
         Button {
             context.send(viewAction: .centerToUser)
         } label: {
-            if #available(iOS 26.0, *) {
-                centerToUseIcon
-                    .glassEffect(.regular.interactive(), in: Circle())
-                    .tint(.compound.bgCanvasDefault)
-            } else {
-                centerToUseIcon
-                    .background(.compound.bgCanvasDefault, in: RoundedRectangle(cornerRadius: 6))
-            }
+            centerToUseIcon
+                .background(.compound.bgCanvasDefault, in: RoundedRectangle(cornerRadius: 6))
         }
         .disabled(context.viewState.isLocationLoading)
         .dynamicTypeSize(.large)

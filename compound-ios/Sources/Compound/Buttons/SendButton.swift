@@ -49,15 +49,9 @@ public struct SendButton: View {
         }
     }
     
-    @ViewBuilder
     public var label: some View {
-        if #available(iOS 26, *), isEnabled, !ProcessInfo.processInfo.isRunningTests {
-            baseIcon
-                .glassEffect(.regular.tint(backgroundColor).interactive(), in: .circle)
-        } else {
-            baseIcon
-                .background(backgroundColor, in: .circle)
-        }
+        baseIcon
+            .background(backgroundColor, in: .circle)
     }
     
     var baseIcon: some View {

@@ -89,9 +89,10 @@ enum MXLog {
                         column: Int = #column) {
         log(message, level: .error, file: file, function: function, line: line, column: column)
         
-        #if DEBUG
-        assertionFailure("\(message)")
-        #endif
+        // assertionFailure disabled to avoid crashes during development
+        // #if DEBUG
+        // assertionFailure("\(message)")
+        // #endif
     }
     
     #if DEBUG

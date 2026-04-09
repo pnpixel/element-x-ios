@@ -22,24 +22,9 @@ struct RoomHeaderView: View {
     let action: () -> Void
     
     var body: some View {
-        if #available(iOS 26.0, *) {
-            // On iOS 26+ we use the toolbarRole(.editor) to leading align.
-            content
-                // Not using a Button here so that we get our custom padding around the avatar. This also
-                // helps fix a bug where the top pixel was being clipped during the push/pop animation as
-                // the Button styling results in a view that is slightly taller than a bar item should be.
-                .padding(6)
-                .padding(.trailing, 6)
-                .glassEffect(.regular.interactive())
-                .roomHeaderAction(action)
-        } else {
-            // On iOS 18 and lower, the editor role causes an animation glitch with the back button whenever
-            // you push a screen whilst the large title is visible on the room screen.
-            content
-                // So take up as much space as possible, with a leading alignment for use in the default principal toolbar position
-                .frame(idealWidth: .greatestFiniteMagnitude, maxWidth: .infinity, alignment: .leading)
-                .roomHeaderAction(action)
-        }
+        content
+            .frame(idealWidth: .greatestFiniteMagnitude, maxWidth: .infinity, alignment: .leading)
+            .roomHeaderAction(action)
     }
     
     private var content: some View {

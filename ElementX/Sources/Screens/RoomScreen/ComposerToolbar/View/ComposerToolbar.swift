@@ -341,8 +341,7 @@ struct ComposerToolbarButtonStyle: ButtonStyle {
         func body(content: Content) -> some View {
             if isEnabled {
                 label(content: content)
-                    .snapshotableGlassEffect(.regular.interactive(),
-                                             snapshotBackground: .compound.bgSubtleSecondary,
+                    .snapshotableGlassEffect(snapshotBackground: .compound.bgSubtleSecondary,
                                              in: .circle)
             } else {
                 label(content: content)

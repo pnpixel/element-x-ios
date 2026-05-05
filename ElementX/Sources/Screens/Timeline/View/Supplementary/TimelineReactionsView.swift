@@ -214,6 +214,9 @@ struct TimelineReactionAddMoreButtonLabel: View {
 
 /// A row of chip buttons for bot-suggested reactions, shown above regular reactions
 /// until the current user has reacted with any of the suggested emojis.
+///
+/// Uses `SuggestedReactionsFlowLayout` to pack short buttons side-by-side and
+/// compress long ones to fill the remaining row space with a trailing fade.
 @MainActor
 struct SuggestedReactionsView: View {
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
@@ -222,23 +225,44 @@ struct SuggestedReactionsView: View {
     let itemID: TimelineItemIdentifier
     let suggestions: [SuggestedReaction]
 
+    @State private var containerWidth: CGFloat = 0
+
     var body: some View {
-        SuggestedReactionsLayout(suggestions: suggestions) { suggestion, isTruncated in
-            Button {
-                feedbackGenerator.impactOccurred()
-                context.send(viewAction: .toggleReaction(key: suggestion.emoji, itemID: itemID))
-            } label: {
-                SuggestedReactionButtonLabel(text: suggestion.displayText, isTruncated: isTruncated)
+        SuggestedReactionsFlowLayout(spacing: 4) {
+            ForEach(suggestions, id: \.emoji) { suggestion in
+                Button {
+                    feedbackGenerator.impactOccurred()
+                    context.send(viewAction: .toggleReaction(key: suggestion.emoji, itemID: itemID))
+                } label: {
+                    SuggestedReactionButtonLabel(text: suggestion.displayText)
+                }
+                .environment(\.suggestedReactionTruncated, isButtonTruncated(suggestion))
             }
         }
+        .background(GeometryReader { geo in
+            Color.clear
+                .onAppear { containerWidth = geo.size.width }
+                .onChange(of: geo.size.width) { _, newValue in containerWidth = newValue }
+        })
         .padding(.leading, 4)
+    }
+
+    /// Estimates whether a button's natural width exceeds the container.
+    private func isButtonTruncated(_ suggestion: SuggestedReaction) -> Bool {
+        guard containerWidth > 0 else { return false }
+        let font = UIFont.preferredFont(forTextStyle: .footnote)
+        let textWidth = (suggestion.displayText as NSString)
+            .size(withAttributes: [.font: font]).width
+        // padding (12*2) + border (2*2) + margin
+        return textWidth + 28 > containerWidth
     }
 }
 
 struct SuggestedReactionButtonLabel: View {
     let text: String
-    var isTruncated = false
     @ScaledMetric(relativeTo: .subheadline) private var lineHeight = 20
+    @Environment(\.suggestedReactionTruncated) private var isTruncated
+
     private let fadeWidth: CGFloat = 24
 
     var body: some View {
@@ -246,7 +270,7 @@ struct SuggestedReactionButtonLabel: View {
             Text(text)
                 .font(.compound.bodySM)
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: isTruncated ? .infinity : nil, alignment: .leading)
                 .frame(height: lineHeight, alignment: .center)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 12)
@@ -266,47 +290,33 @@ struct SuggestedReactionButtonLabel: View {
     }
 }
 
-/// A view that lays out suggested reactions using SuggestedReactionsFlowLayout,
-/// passing `isTruncated` to each button based on whether it was compressed.
-struct SuggestedReactionsLayout<ButtonContent: View>: View {
-    let suggestions: [SuggestedReaction]
-    let buttonBuilder: (SuggestedReaction, Bool) -> ButtonContent
+// MARK: - Truncation Environment Key
 
-    @State private var containerWidth: CGFloat = 0
+private struct SuggestedReactionTruncatedKey: EnvironmentKey {
+    static let defaultValue = false
+}
 
-    var body: some View {
-        SuggestedReactionsFlowLayout(spacing: 4) {
-            ForEach(suggestions, id: \.emoji) { suggestion in
-                buttonBuilder(suggestion, isTruncated(for: suggestion))
-            }
-        }
-        .background(GeometryReader { geo in
-            Color.clear
-                .onAppear { containerWidth = geo.size.width }
-                .onChange(of: geo.size.width) { _, newValue in containerWidth = newValue }
-        })
-    }
-
-    private func isTruncated(for suggestion: SuggestedReaction) -> Bool {
-        guard containerWidth > 0 else { return false }
-        let font = UIFont.preferredFont(forTextStyle: .footnote)
-        let textWidth = (suggestion.displayText as NSString)
-            .size(withAttributes: [.font: font]).width
-        // Add padding (12 + 12) + border (2 + 2) + some margin
-        let buttonNaturalWidth = textWidth + 28
-        return buttonNaturalWidth > containerWidth
+extension EnvironmentValues {
+    var suggestedReactionTruncated: Bool {
+        get { self[SuggestedReactionTruncatedKey.self] }
+        set { self[SuggestedReactionTruncatedKey.self] = newValue }
     }
 }
 
-/// Flow layout that fills remaining row space with oversized items.
+// MARK: - Flow Layout
+
+/// Flow layout for suggested reactions.
 ///
-/// Short items keep their natural width. Items wider than the remaining space
-/// are compressed to fill the rest of the row (and get a fade-out via FadingText).
-/// A minimum width threshold prevents items from being squeezed too small —
-/// they wrap to the next line instead.
+/// Short items keep their natural width. Items wider than the remaining row
+/// space are compressed to fill it. Items that would be squeezed below
+/// `minWidthFraction` of the row wrap to the next line instead.
+///
+/// Compressed subviews receive `suggestedReactionTruncated = true` via
+/// the environment so they can show a trailing fade.
 struct SuggestedReactionsFlowLayout: Layout {
     var spacing: CGFloat = 4
-    /// If an item would be squeezed below this fraction of the row width, wrap it instead.
+
+    /// Minimum fraction of row width before an item wraps instead of being compressed.
     private let minWidthFraction: CGFloat = 0.3
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
@@ -324,24 +334,19 @@ struct SuggestedReactionsFlowLayout: Layout {
         let maxWidth = bounds.width
         let rows = computeRows(maxWidth: maxWidth, subviews: subviews)
         var y = bounds.minY
+
         for row in rows {
             let rowHeight = row.map { $0.sizeThatFits(.unspecified).height }.max() ?? 0
             var x = bounds.minX
-            let usedByFixed = row.map { min($0.sizeThatFits(.unspecified).width, maxWidth) }.reduce(0, +)
-                + CGFloat(max(row.count - 1, 0)) * spacing
 
             for subview in row {
                 let idealWidth = subview.sizeThatFits(.unspecified).width
-                let remainingWidth = maxWidth - x + bounds.minX
-                let width: CGFloat
-                if idealWidth <= remainingWidth {
-                    width = idealWidth
-                } else {
-                    width = remainingWidth
-                }
-                let height = subview.sizeThatFits(.unspecified).height
+                let remaining = maxWidth - (x - bounds.minX)
+                let width = min(idealWidth, remaining)
+
                 subview.place(at: CGPoint(x: x, y: y),
-                              proposal: ProposedViewSize(width: width, height: height))
+                              proposal: ProposedViewSize(width: width,
+                                                         height: subview.sizeThatFits(.unspecified).height))
                 x += width + spacing
             }
             y += rowHeight + spacing
@@ -356,22 +361,18 @@ struct SuggestedReactionsFlowLayout: Layout {
 
         for subview in subviews {
             let idealWidth = subview.sizeThatFits(.unspecified).width
-            let remainingWidth = maxWidth - currentWidth - (currentRow.isEmpty ? 0 : spacing)
+            let remaining = maxWidth - currentWidth - (currentRow.isEmpty ? 0 : spacing)
 
             if currentRow.isEmpty {
-                // First item always goes on current row
                 currentRow.append(subview)
                 currentWidth = min(idealWidth, maxWidth)
-            } else if idealWidth <= remainingWidth {
-                // Fits naturally
+            } else if idealWidth <= remaining {
                 currentRow.append(subview)
                 currentWidth += spacing + idealWidth
-            } else if remainingWidth >= minItemWidth {
-                // Doesn't fit naturally but there's enough room to show it truncated
+            } else if remaining >= minItemWidth {
                 currentRow.append(subview)
                 currentWidth = maxWidth
             } else {
-                // Not enough room — wrap to next line
                 rows.append(currentRow)
                 currentRow = [subview]
                 currentWidth = min(idealWidth, maxWidth)
